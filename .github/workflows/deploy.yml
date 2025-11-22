@@ -18,11 +18,9 @@ jobs:
               node-version: 18
 
           - name: Install Frontend Dependencies
-            working-directory: frontend
             run: npm install
 
           - name: Build Frontend
-            working-directory: frontend
             run: npm run build
             
           - name: Upload Dist to S3
@@ -34,7 +32,7 @@ jobs:
               AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
               AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               AWS_REGION: "ap-south-1"
-              SOURCE_DIR: "frontend/dist"
+              SOURCE_DIR: "dist"
 
           - name: Invalidate CloudFront Cache
             uses: chetan/invalidate-cloudfront-action@v2
