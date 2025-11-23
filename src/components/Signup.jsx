@@ -5,10 +5,11 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const API = import.meta.env.VITE_API_URL;
 
   const userSignup = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/signup", {
+      const res = await fetch(`${API}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

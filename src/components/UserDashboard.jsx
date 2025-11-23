@@ -7,15 +7,16 @@ function UserDashboard() {
   const [courses, setCouses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
   const navigate = useNavigate();
+  const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const fetchCourses = async () => {
-      const res1 = await fetch("http://localhost:3000/api/courses/", {
+      const res1 = await fetch(`${API}/api/courses/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      const res2 = await fetch("http://localhost:3000/api/allCourses/", {
+      const res2 = await fetch(`${API}/api/allCourses/`, {
         method: "POST",
       });
 
@@ -68,7 +69,10 @@ function UserDashboard() {
             {courses.map((c) => {
               return (
                 <li key={c._id}>
-                  <Card onClick= {()=>{navigate(`/purchasecourse/${c._id}`)}}
+                  <Card
+                    onClick={() => {
+                      navigate(`/purchasecourse/${c._id}`);
+                    }}
                     style={{
                       padding: "0px",
                       display: "flex",
@@ -107,13 +111,13 @@ function UserDashboard() {
                           ⭐{c.rating}
                         </Typography>
                       </div>
-                      <div style={{display: "flex",flexDirection: 'column' }}>
-                      <Typography padding={"0px 0px 8px 10px"} variant="h7">
-                        By {c.instructor}
-                      </Typography>
-                      <Typography padding={"0px 0px 8px 10px"} variant="h7">
-                        {c.level}
-                      </Typography>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Typography padding={"0px 0px 8px 10px"} variant="h7">
+                          By {c.instructor}
+                        </Typography>
+                        <Typography padding={"0px 0px 8px 10px"} variant="h7">
+                          {c.level}
+                        </Typography>
                       </div>
                     </div>
                   </Card>
@@ -142,7 +146,10 @@ function UserDashboard() {
             {allCourses.map((c) => {
               return (
                 <li key={c._id}>
-                  <Card onClick= {()=>{navigate(`/purchasecourse/${c._id}`)}}
+                  <Card
+                    onClick={() => {
+                      navigate(`/purchasecourse/${c._id}`);
+                    }}
                     style={{
                       padding: "0px",
                       display: "flex",
@@ -151,7 +158,7 @@ function UserDashboard() {
                       width: "300px",
                       height: "250px",
                       marginLeft: "10px",
-                      cursor: "pointer" ,
+                      cursor: "pointer",
                     }}
                   >
                     <CardMedia
@@ -188,13 +195,13 @@ function UserDashboard() {
                           ⭐{c.rating}
                         </Typography>
                       </div>
-                      <div style={{display: "flex",flexDirection: 'column' }}>
-                      <Typography padding={"0px 0px 8px 10px"} variant="h7">
-                        By {c.instructor}
-                      </Typography>
-                      <Typography padding={"0px 0px 8px 10px"} variant="h7">
-                        {c.level}
-                      </Typography>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Typography padding={"0px 0px 8px 10px"} variant="h7">
+                          By {c.instructor}
+                        </Typography>
+                        <Typography padding={"0px 0px 8px 10px"} variant="h7">
+                          {c.level}
+                        </Typography>
                       </div>
                     </div>
                   </Card>

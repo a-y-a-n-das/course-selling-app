@@ -2,6 +2,7 @@ import { User, Course, Educator } from "../models/model.js";
 import multer from "multer";
 import jwt from "jsonwebtoken";
 
+const secret  = process.env.SECRET;
 const img_key = process.env.IMGBB_KEY;
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });
@@ -56,7 +57,7 @@ export const signin = async (req, res) => {
   }
   const { password, ...resObj } = userObj.toObject();
 
-  const token = jwt.sign({ email: userObj.email }, "secret", {
+  const token = jwt.sign({ email: userObj.email }, secret, {
     expiresIn: "12h",
   });
 
@@ -76,7 +77,7 @@ export const educatorSignin = async (req, res) => {
   }
   const { password, ...resObj } = userObj.toObject();
 
-  const token = jwt.sign({ email: userObj.email }, "secret", {
+  const token = jwt.sign({ email: userObj.email }, process.env.SECRET, {
     expiresIn: "12h",
   });
 

@@ -5,10 +5,12 @@ import { useNavigate, useParams } from "react-router";
 function PurchaseCourse() {
   const [c, setCourse] = useState("");
   const navigate = useNavigate();
-  const {courseId}= useParams(); 
+  const { courseId } = useParams();
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const courseDetail = async () => {
-      const res = await fetch("http://localhost:3000/api/coursebyid", {
+      const res = await fetch(`${API}/api/coursebyid`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ courseId }),
@@ -22,7 +24,7 @@ function PurchaseCourse() {
   }, [courseId]);
 
   async function buyCourse() {
-    await fetch("http://localhost:3000/api/purchasecourse", {
+    await fetch(`${API}/api/purchasecourse`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -59,7 +61,7 @@ function PurchaseCourse() {
               component="img"
               image={c.th_img}
               alt="Course thumbnail"
-              height='418'
+              height="418"
             />
           </Card>
           <Card

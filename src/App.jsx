@@ -13,6 +13,8 @@ import EduDashboard from "./components/EduDashboard.jsx";
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(null);
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const gettoken = async () => {
       const token = localStorage.getItem("token");
@@ -23,14 +25,13 @@ function App() {
         return;
       }
 
-      const res = await fetch("http://localhost:3000/api/token", {
+      const res = await fetch(`${API}/api/token`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${tokenToVerify}`,
           "content-type": "application/json",
         },
       });
-      console.log(res.status);
       if (res.status === 200) {
         setIsSignedIn(true);
         return;

@@ -9,11 +9,12 @@ function Signin({setIsSignedIn}) {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+  const API = import.meta.env.VITE_API_URL;
 
 
     const userSignin = async ( ) => {
     try {
-      const res = await fetch("http://localhost:3000/api/signin", {
+      const res = await fetch(`${API}/api/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

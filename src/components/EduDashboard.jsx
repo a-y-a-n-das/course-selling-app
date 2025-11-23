@@ -20,14 +20,14 @@ function EduDashboard() {
     level: "",
     image: null,
   });
+  const API = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("edu-token");
-    console.log(token);
     const fetchCourses = async () => {
-      const res = await fetch("http://localhost:3000/api/coursesbyeducator/", {
+      const res = await fetch(`${API}/api/coursesbyeducator/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,7 +56,7 @@ function EduDashboard() {
       if (key != "image") fd.append(key, value);
     });
 
-    const res = await fetch("http://localhost:3000/api/createcourse/", {
+    const res = await fetch(`${API}/api/createcourse/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("edu-token")}`,
       },
