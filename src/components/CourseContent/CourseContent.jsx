@@ -29,28 +29,26 @@ function CourseContent() {
           },
         });
         const data = await res.json();
+        
         if (res.ok) {
           setCourseData(data);
-          setActiveLesson(courseData.lessons[0]);
-          setLoading(false);
+          setActiveLesson(data.lessons[0]);
           setError(null);
         } else if (res.status === 403) {
-          console.error("Access denied. Course not purchased.");
           setError("Access denied. Course not purchased.");
-          setLoading(false);
         } else if (res.status === 404) {
           console.error("No course data:", data.message);
           setError("Course has no lessons available.");
-          setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching course data:", error);
         setError("Error fetching course data.");
+      } finally {
         setLoading(false);
       }
     };
     fetchCourseData();
-  }, [courseId, API, courseData]);
+  }, [courseId, API]);
 
 
   if (loading) {
