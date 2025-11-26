@@ -274,3 +274,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 Built with ❤️ by Ayan Das
+
+## 💡 Development Credits
+
+README documentation and code optimization assistance provided by **GitHub Copilot** powered by Claude Sonnet 4.5
