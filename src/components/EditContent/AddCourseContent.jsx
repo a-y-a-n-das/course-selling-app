@@ -1,7 +1,7 @@
 import { Button, Card, MenuItem, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import EduSideBar from "./EduSideBar";
+import EduSideBar from "./EduSideBar.jsx";
 
 function AddCourseContent() {
   const { courseId } = useParams();
