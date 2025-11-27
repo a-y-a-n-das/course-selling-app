@@ -129,7 +129,7 @@ export const deleteLesson = async (req, res) => {
   try{
     const del_res = await fetch(`${process.env.BACKEND_URL}/api/deletefile`, {
       method: "DELETE",
-      body: JSON.stringify({ file: file_path }),
+      body: JSON.stringify({ file: file_path, token: process.env.TOKEN }),
       headers: {
         "Content-Type": "application/json",
       },

@@ -54,7 +54,7 @@ function AddCourseContent() {
         setLoading(false);
       }
     };
-    
+
     fetchCourseData();
   }, [courseId, API]);
 
@@ -74,56 +74,83 @@ function AddCourseContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { uploadUrl, file: uploadedFile } = await fetch(
-      `${API}/api/uploadurl`,
-      {
+    
+    if (!lessonTitle || !file) {
+      alert("Please provide lesson title and select a file");
+      return;
+    }
+
+    try {
+      // Step 1: Get upload URL
+      const urlResponse = await fetch(`${API}/api/uploadurl`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("edu-token")}`,
         },
         body: JSON.stringify({ fileType: lessonType, courseId }),
+      });
+
+      if (!urlResponse.ok) {
+        const errorData = await urlResponse.json();
+        alert("Error getting upload URL: " + (errorData.error || "Unknown error"));
+        return;
       }
-    ).then((res) => res.json());
-    let uploadResponse= null;
-    if (uploadUrl && file) {
-      uploadResponse = await fetch(uploadUrl, {
+
+      const { uploadUrl, file: uploadedFile } = await urlResponse.json();
+      
+      if (!uploadUrl) {
+        alert("Failed to get upload URL");
+        return;
+      }
+
+      // Step 2: Upload file to S3
+      const uploadResponse = await fetch(uploadUrl, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
       });
-    }
 
-    if (uploadResponse.ok && courseId && lessonTitle && lessonType && uploadedFile) {
-      const res = await fetch(`${API}/api/addlesson`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("edu-token")}`,
-        },
-        body: JSON.stringify({
-          courseId,
-          lessonTitle,
-          lessonType,
-          file: uploadedFile,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCourseData((prevData) => ({
-          ...prevData,
-          lessons: [...prevData.lessons, data.lesson],
-        }));
-        setLessonTitle("");
-        setLessonType("video");
-        setFile(null);
-        fileRef.current.value = "";
-        alert("Lesson added successfully");
-      } else {
-        alert("Error adding lesson: " + data.error);
+      if (!uploadResponse.ok) {
+        alert("File upload to S3 failed");
+        return;
       }
-    } else {
-      alert("File upload failed");
+
+      // Step 3: Add lesson to database
+      if (courseId && lessonTitle && lessonType && uploadedFile) {
+        const res = await fetch(`${API}/api/addlesson`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("edu-token")}`,
+          },
+          body: JSON.stringify({
+            courseId,
+            lessonTitle,
+            lessonType,
+            file: uploadedFile,
+          }),
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          setCourseData((prevData) => ({
+            ...prevData,
+            lessons: [...prevData.lessons, data.lesson],
+          }));
+          setLessonTitle("");
+          setLessonType("video");
+          setFile(null);
+          fileRef.current.value = "";
+          alert("Lesson added successfully");
+        } else {
+          alert("Error adding lesson: " + data.error);
+        }
+      }
+    } catch (error) {
+      console.error("Error in file upload process:", error);
+      alert("Error uploading lesson: " + error.message);
     }
   };
 

@@ -4,7 +4,9 @@ A modern full-stack course-selling platform built with React, Node.js, Express, 
 
 ## 🌐 Live Link
 
-🚧 **Coming Soon** - Deployed on AWS, public access launching shortly
+🚀 **[CourseHive - Live Demo](https://npm-app.duckdns.org/)**
+
+Experience the platform live with full functionality including course browsing, purchasing, and lesson management.
 
 ## ✨ Features
 
@@ -156,6 +158,8 @@ Create `backend/.env`:
 ```env
 PORT=5000
 SECRET=your_jwt_secret_key_here
+TOKEN=your_internal_api_token_here
+BACKEND_URL=http://localhost:5000
 MONGODB_URL=mongodb+srv://username:password@cluster.mongodb.net/Course-app
 IMGBB_KEY=your_imgbb_api_key
 AWS_REGION=ap-south-1
@@ -207,20 +211,25 @@ npm run preview
 - `POST /api/signup` - Student registration
 - `POST /api/signin` - Student login
 - `POST /api/educatorsignin` - Educator login
-- `GET /api/courses` - List all courses
+- `POST /api/educatorsignup` - Educator registration
+- `POST /api/allCourses` - List all courses
+- `POST /api/coursebyid` - Get course details by ID
 
 ### Protected Routes (Require JWT)
-- `GET /api/user/courses` - Get user's purchased courses
-- `POST /api/coursebyid` - Get course details by ID
+- `POST /api/courses` - Get user's purchased courses
 - `POST /api/purchasecourse` - Purchase a course
 - `POST /api/createcourse` - Create new course (Educators only)
 - `GET /api/coursesbyeducator` - Get educator's courses
 - `GET /api/coursecontent/:courseId` - Get course lessons (purchased users only)
-- `GET /api/video/:courseId/:file` - Get pre-signed S3 URL for video/PDF
+- `GET /api/coursecontenteducator/:courseId` - Get educator's course lessons
+- `GET /api/getvideourl/:courseId/:file` - Get pre-signed S3 URL for video/PDF
 - `POST /api/uploadurl` - Get presigned URL for uploading lessons
 - `POST /api/addlesson` - Add lesson to course
-- `DELETE /api/deleteLesson/:lessonId` - Delete lesson and S3 file
-- `DELETE /api/deletefile` - Delete file from S3 bucket
+- `DELETE /api/deletelesson/:lessonId` - Delete lesson and S3 file
+
+### Internal Routes (Backend-to-Backend)
+- `POST /api/getuploadurl` - Generate S3 presigned URL (internal use)
+- `DELETE /api/deletefile` - Delete file from S3 bucket (requires TOKEN)
 
 ## 🔐 Authentication Flow
 
@@ -246,7 +255,7 @@ npm run preview
 - Course videos and PDFs stored in AWS S3 under `content/{courseId}/{filename}`
 - Pre-signed URLs generated with 5-minute expiry for security
 - Only purchased course content accessible to users
-- Students request signed URLs via `/api/video/:courseId/:file`
+- Students request signed URLs via `/api/getvideourl/:courseId/:file`
 
 ### Deletion Flow
 1. Educator clicks delete on a lesson

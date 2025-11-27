@@ -2,7 +2,11 @@ import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 export const deleteFile = async (req, res) => {
   const file = req.body.file;
-
+  const token = req.body.token;
+  if(!(token === process.env.TOKEN)){
+    res.status(403).json({ error: "Unauthorized" });
+    return;
+  }
   console.log("Deleting file:", file);
   const s3Client = new S3Client({
     region: process.env.AWS_REGION,

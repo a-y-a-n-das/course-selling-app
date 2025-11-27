@@ -11,10 +11,17 @@ export const getUploadUrl = async (req, res) => {
     });
     try{
     const {file, fileType} = req.body;
+    
+    // Map fileType to proper MIME type
+    const contentTypeMap = {
+      'video': 'video/mp4',
+      'pdf': 'application/pdf'
+    };
+    
   const command = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
     Key: `content/${file}`,
-    ContentType: fileType,
+    ContentType: contentTypeMap[fileType] || 'application/octet-stream',
   })
 
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 }); // 5 minutes

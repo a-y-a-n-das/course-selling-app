@@ -49,16 +49,28 @@ function SideBar({ lessons = [], setActiveLesson, activeLesson }) {
       <List>
         {lessons.map((lesson, idx) => {
           const key = lesson?.lessonId ? lesson.lessonId : idx;
+          const isActive = activeLesson?.lessonId === lesson?.lessonId;
           return (
             <ListItem key={key} disablePadding>
               <ListItemButton
                 onClick={() => setActiveLesson(lesson)}
-                selected={activeLesson && (activeLesson.lessonId === lesson.lessonId)}
+                selected={isActive}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'primary.light',
+                    '&:hover': {
+                      backgroundColor: 'primary.light',
+                    },
+                  },
+                }}
               >
                 <Box sx={{ width: "100%", p: 1 }}>
                   <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: activeLesson?.lessonId === lesson.lessonId ? 600 : 400 }}
+                    sx={{ 
+                      fontWeight: isActive ? 600 : 400,
+                      color: isActive ? 'primary.dark' : 'text.primary',
+                    }}
                   >
                     {lesson?.title}
                   </Typography>
