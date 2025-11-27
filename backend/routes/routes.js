@@ -49,9 +49,9 @@ router.get("/coursecontent/:courseId", auth, courseContent);
 router.get("/getvideourl/:courseId/:file", auth, getVideoUrl);
 
 //add course content route
-router.post("/addlesson", addLesson);
-router.post("/uploadurl", uploadUrl);
-router.post("/getuploadurl", getUploadUrl);
+router.post("/addlesson", auth, addLesson);
+router.post("/uploadurl", auth, uploadUrl);
+router.post("/getuploadurl",auth ,getUploadUrl);
 router.get("/coursecontenteducator/:courseId", auth, courseContentEducator);
 router.delete("/deletelesson/:lessonId", auth, deleteLesson);
 router.delete("/deletefile/", deleteFile);
