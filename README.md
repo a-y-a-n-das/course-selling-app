@@ -276,14 +276,14 @@ npm run preview
 ## 📝 Usage
 
 ### For Students
-1. Sign up or sign in at `/signin`
+1. **Sign up** at `/signup` or **sign in** at `/signin`
 2. Browse courses on the dashboard
 3. Click "Purchase" to enroll in a course
 4. Access course content from your dashboard
 5. Watch videos and read PDFs in the course viewer
 
 ### For Educators
-1. Sign in at `/educators`
+1. **Sign up** at `/educatorsignup` or **sign in** at `/educators`
 2. Create courses from the educator dashboard
 3. Upload thumbnail, set price, level, duration, and category
 4. View all your created courses
@@ -291,6 +291,18 @@ npm run preview
 6. Upload video (MP4/MKV) or PDF lessons with titles
 7. View lessons in real-time sidebar
 8. Delete lessons when needed (auto-removes from S3 and database)
+
+## 🔗 Important URLs
+
+### Student Portal
+- **Sign Up**: `https://npm-app.duckdns.org/signup`
+- **Sign In**: `https://npm-app.duckdns.org/signin`
+- **Dashboard**: `https://npm-app.duckdns.org/` (after login)
+
+### Educator Portal
+- **Sign Up**: `https://npm-app.duckdns.org/educatorsignup`
+- **Sign In**: `https://npm-app.duckdns.org/educators`
+- **Dashboard**: Access after login to create and manage courses
 
 ## 🤝 Contributing
 
