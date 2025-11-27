@@ -6,11 +6,22 @@ import {
   ListItemButton,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const drawerWidth = 250;
 const appBarHeight = '7vh'; // matches your header height
 
 function SideBar({ lessons = [], setActiveLesson, activeLesson }) {
+  const [message, setMessage] = useState("");
+  
+  useEffect(() => {
+    if (lessons.length === 0) {
+      setMessage("No lessons available.");
+    } else {
+      setMessage("");
+    }
+  }, [lessons]);
+  
   return (
     <Drawer
       variant="permanent"
@@ -30,6 +41,11 @@ function SideBar({ lessons = [], setActiveLesson, activeLesson }) {
       <Box sx={{ p: 2 }}>
         <Typography variant="h6">Lessons</Typography>
       </Box>
+      {message && (
+        <Box sx={{ p: 2 }}>
+          <Typography variant="body1">{message}</Typography>
+        </Box>
+      )}
       <List>
         {lessons.map((lesson, idx) => {
           const key = lesson?.lessonId ? lesson.lessonId : idx;
