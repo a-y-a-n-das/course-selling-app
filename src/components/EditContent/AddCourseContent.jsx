@@ -54,6 +54,7 @@ function AddCourseContent() {
         setLoading(false);
       }
     };
+    
     fetchCourseData();
   }, [courseId, API]);
 
