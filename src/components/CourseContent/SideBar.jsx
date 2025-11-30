@@ -32,7 +32,6 @@ function SideBar({ lessons = [], setActiveLesson, activeLesson }) {
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
           boxSizing: "border-box",
-          // Offset the whole drawer below the AppBar instead of z-index trick
           marginTop: appBarHeight,
           height: `calc(100% - ${appBarHeight})`,
         },
@@ -48,19 +47,18 @@ function SideBar({ lessons = [], setActiveLesson, activeLesson }) {
       )}
       <List>
         {lessons.map((lesson, idx) => {
-          const key = lesson?.lessonId ? lesson.lessonId : idx;
-          const isActive = activeLesson?.lessonId === lesson?.lessonId;
+          const key = idx;
+          const isActive = activeLesson === lesson;
           return (
             <ListItem key={key} disablePadding>
               <ListItemButton
                 onClick={() => setActiveLesson(lesson)}
-                selected={isActive}
                 sx={{
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.light',
-                    '&:hover': {
-                      backgroundColor: 'primary.light',
-                    },
+                  backgroundColor: isActive ? 'rgba(25, 118, 210, 0.12)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: isActive 
+                      ? 'rgba(25, 118, 210, 0.18)' 
+                      : 'rgba(0, 0, 0, 0.04)',
                   },
                 }}
               >
