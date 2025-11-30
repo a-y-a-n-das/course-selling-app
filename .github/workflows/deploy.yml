@@ -25,6 +25,8 @@ jobs:
             run: npm run build
             env:
               VITE_API_URL: ${{secrets.VITE_API_URL}}
+              VITE_RAZORPAY_KEY_ID: ${{secrets.VITE_RAZORPAY_KEY_ID}}
+              
             
           - name: Upload Dist to S3
             uses: jakejarvis/s3-sync-action@master
