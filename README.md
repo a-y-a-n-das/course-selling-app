@@ -25,7 +25,7 @@ Experience the platform live with full functionality including course browsing, 
 - [ ] Enhanced analytics dashboard for educators (course views, revenue tracking)
 - [ ] Course progress tracking for students (% completed, certificates)
 - [ ] Course ratings and reviews system
-- [ ] Payment gateway integration (Stripe/Razorpay)
+- [x] Payment gateway integration (Razorpay)
 - [ ] Email notifications for course updates and purchases
 
 ## ✨ Features
@@ -33,7 +33,7 @@ Experience the platform live with full functionality including course browsing, 
 ### For Students
 - 🔐 **Secure Authentication** - JWT-based user authentication
 - 🎓 **Course Browsing** - Explore available courses with detailed information
-- 💳 **Course Purchase** - Simple one-click course enrollment
+- 💳 **Secure Payment** - Razorpay integration with payment verification
 - 📹 **Rich Content Access** - Watch video lessons and read PDF materials
 - 🎯 **Personalized Dashboard** - Track purchased courses and progress
 
@@ -51,6 +51,7 @@ Experience the platform live with full functionality including course browsing, 
 - ⚡ **Fast Development** - Vite + React with HMR
 - 🎨 **Modern UI** - Material-UI (MUI) components with responsive design
 - 🔒 **Secure Content** - Pre-signed S3 URLs with time-limited access (5 min expiry)
+- 💰 **Payment Integration** - Razorpay with signature verification and webhook handling
 - 🌐 **RESTful API** - Express backend with protected routes
 - 🗄️ **MongoDB Atlas** - Cloud database with Mongoose ODM
 - 🚀 **Cloud Storage** - AWS S3 for scalable video/PDF hosting

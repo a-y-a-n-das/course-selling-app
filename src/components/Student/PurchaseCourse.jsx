@@ -24,17 +24,68 @@ function PurchaseCourse() {
   }, [courseId, API]);
 
   async function buyCourse() {
-    await fetch(`${API}/api/purchasecourse`, {
+    console.log("Buying course:", c);
+    if (!window.Razorpay) {
+      alert("Razorpay SDK failed to load. Check script tag.");
+      return;
+    }
+
+    const orderRes = await fetch(`${API}/api/order`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ courseId }),
-    })
-      .then((res) => res.json)
-      .then((data) => console.log(data.message));
-    navigate("/dashboard");
+      body: JSON.stringify({ courseId: c._id, amount: c.price }),
+    });
+
+    const orderData = await orderRes.json();
+    console.log("Order data:", orderData);
+
+    if (!orderData.order) {
+      alert(orderData.message || "Failed to create order");
+      return;
+    }
+
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: orderData.order.amount,
+      currency: "INR",
+      name: "Course Selling Platform",
+      description: "Test Transaction",
+      order_id: orderData.order.id,
+
+      handler: async function (response) {
+        const verifyRes = await fetch(`${API}/api/verifyPayment`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            courseId: c._id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          }),
+        });
+        const verifyData = await verifyRes.json();
+        alert(verifyData.message);
+        if (verifyRes.ok) {
+          navigate("/dashboard");
+        }
+      },
+      prefill: {
+        name: "Student",
+        email: "student@example.com",
+      },
+    };
+
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
+
+
   }
 
   return (

@@ -27,6 +27,7 @@ import { auth } from "../controllers/auth.js";
 import { addLesson, uploadUrl } from "../controllers/addLesson.js";
 import { getUploadUrl } from "../controllers/uploadUrl.js";
 import { deleteFile } from "../controllers/deleteFile.js";
+import { createOrder, verifyPayment } from "../controllers/payment.js";
 
 router.post("/signup", signup);
 router.post("/signin", signin);
@@ -55,5 +56,9 @@ router.post("/getuploadurl",getUploadUrl);
 router.get("/coursecontenteducator/:courseId", auth, courseContentEducator);
 router.delete("/deletelesson/:lessonId", auth, deleteLesson);
 router.delete("/deletefile/", deleteFile);
+
+
+router.post("/order", auth, createOrder);
+router.post("/verifyPayment", auth, verifyPayment);
 
 export default router;
