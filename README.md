@@ -8,6 +8,14 @@ A modern full-stack course-selling platform built with React, Node.js, Express, 
 
 Experience the platform live with full functionality including course browsing, purchasing, and lesson management.
 
+## 📋 Upcoming Features
+
+- [ ] Enhanced analytics dashboard for educators (course views, revenue tracking)
+- [ ] Course progress tracking for students (% completed, certificates)
+- [ ] Course ratings and reviews system
+- [ ] Payment gateway integration (Stripe/Razorpay)
+- [ ] Email notifications for course updates and purchases
+
 ## ✨ Features
 
 ### For Students
