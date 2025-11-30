@@ -8,6 +8,18 @@ A modern full-stack course-selling platform built with React, Node.js, Express, 
 
 Experience the platform live with full functionality including course browsing, purchasing, and lesson management.
 
+## 🔗 Important URLs
+
+### Student Portal
+- **Sign Up**: `https://npm-app.duckdns.org/signup`
+- **Sign In**: `https://npm-app.duckdns.org/signin`
+- **Dashboard**: `https://npm-app.duckdns.org/` (after login)
+
+### Educator Portal
+- **Sign Up**: `https://npm-app.duckdns.org/educatorsignup`
+- **Sign In**: `https://npm-app.duckdns.org/educators`
+- **Dashboard**: Access after login to create and manage courses
+
 ## 📋 Upcoming Features
 
 - [ ] Enhanced analytics dashboard for educators (course views, revenue tracking)
@@ -299,18 +311,6 @@ npm run preview
 6. Upload video (MP4/MKV) or PDF lessons with titles
 7. View lessons in real-time sidebar
 8. Delete lessons when needed (auto-removes from S3 and database)
-
-## 🔗 Important URLs
-
-### Student Portal
-- **Sign Up**: `https://npm-app.duckdns.org/signup`
-- **Sign In**: `https://npm-app.duckdns.org/signin`
-- **Dashboard**: `https://npm-app.duckdns.org/` (after login)
-
-### Educator Portal
-- **Sign Up**: `https://npm-app.duckdns.org/educatorsignup`
-- **Sign In**: `https://npm-app.duckdns.org/educators`
-- **Dashboard**: Access after login to create and manage courses
 
 ## 🤝 Contributing
 
