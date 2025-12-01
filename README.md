@@ -55,6 +55,8 @@ Experience the platform live with full functionality including course browsing, 
 - 🌐 **RESTful API** - Express backend with protected routes
 - 🗄️ **MongoDB Atlas** - Cloud database with Mongoose ODM
 - 🚀 **Cloud Storage** - AWS S3 for scalable video/PDF hosting
+- 🐳 **Containerized** - Docker & Docker Compose for consistent deployments
+- 🔐 **Security Best Practices** - Non-root containers, multi-stage builds, minimal attack surface
 
 ## 🛠️ Tech Stack
 
@@ -73,11 +75,17 @@ Experience the platform live with full functionality including course browsing, 
 - **AWS SDK v3** - S3 client for content delivery
 - **Multer** - File upload handling
 - **CORS** - Cross-origin resource sharing
+- **Razorpay** - Payment gateway integration
 
 ### Cloud Services
 - **AWS S3** - Video and PDF storage
 - **MongoDB Atlas** - Managed MongoDB hosting
 - **ImgBB** - Course thumbnail hosting
+
+### DevOps & Containerization
+- **Docker** - Container platform for consistent deployments
+- **Docker Compose** - Multi-container orchestration
+- **Nginx** - Reverse proxy and static file serving (in containers)
 
 ## 📁 Project Structure
 
@@ -101,7 +109,9 @@ Course-selling/
 │   ├── util/
 │   │   └── s3.js             # AWS S3 client configuration
 │   ├── .env                  # Environment variables (not in Git)
+│   ├── .dockerignore         # Docker ignore patterns
 │   ├── .gitignore
+│   ├── Dockerfile            # Backend container configuration
 │   ├── example.env           # Environment template
 │   ├── server.js             # Express app entry point
 │   ├── package.json
@@ -136,7 +146,11 @@ Course-selling/
 │   └── index.css
 ├── public/
 ├── .env                       # Frontend environment variables (VITE_API_URL)
+├── .dockerignore              # Docker ignore patterns
 ├── .gitignore
+├── docker-compose.yml         # Multi-container orchestration
+├── Dockerfile                 # Frontend container configuration
+├── nginx.conf                 # Nginx reverse proxy configuration
 ├── vite.config.js
 ├── eslint.config.js
 ├── package.json
@@ -152,12 +166,14 @@ Course-selling/
 - **MongoDB Atlas** account (or local MongoDB)
 - **AWS Account** with S3 bucket configured
 - **ImgBB API Key** (for thumbnails)
+- **Razorpay Account** (for payment integration)
+- **Docker & Docker Compose** (optional, for containerized deployment)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/a-y-a-n-das/course-selling-app.git
+   git clone https://github.com/a-y-a-n-das/coursehive.git
    cd Course-selling
    ```
 
@@ -188,17 +204,20 @@ AWS_REGION=ap-south-1
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 S3_BUCKET_NAME=your_bucket_name
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 ```
 
 #### Frontend Environment Variables
 Create `.env` in the root:
 ```env
 VITE_API_URL=http://localhost:5000
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 ```
 
 ### Running the Application
 
-#### Development Mode
+#### Development Mode (Traditional)
 
 1. **Start the backend server** (from `backend/` folder):
    ```bash
@@ -217,14 +236,53 @@ VITE_API_URL=http://localhost:5000
    - Frontend: `http://localhost:5173`
    - Backend API: `http://localhost:5000`
 
+#### Development Mode (Docker) 🐳
+
+1. **Start all services with Docker Compose**:
+   ```bash
+   docker compose up -d
+   ```
+
+2. **Access the app**
+   - Frontend: `http://localhost`
+   - Backend API: `http://localhost:5000`
+
+3. **View logs**:
+   ```bash
+   # All services
+   docker compose logs -f
+   
+   # Specific service
+   docker compose logs -f backend
+   docker compose logs -f frontend
+   ```
+
+4. **Stop services**:
+   ```bash
+   docker compose down
+   ```
+
 #### Production Build
 
+**Traditional:**
 ```bash
 # Build frontend
 npm run build
 
 # Preview production build
 npm run preview
+```
+
+**Docker:**
+```bash
+# Build images
+docker compose build
+
+# Run in production mode
+docker compose up -d
+
+# Or build and run together
+docker compose up -d --build
 ```
 
 ## 🔑 API Endpoints
@@ -294,6 +352,240 @@ npm run preview
   ```
 
 - **Vite HMR** - Instant hot module replacement during development
+
+## 🐳 Docker Deployment
+
+### Docker Architecture
+
+CourseHive uses **multi-stage Docker builds** for optimized production images:
+
+**Backend Container:**
+- Multi-stage build (builder + runner)
+- Installs build tools only in builder stage
+- Final image includes only runtime dependencies
+- Runs as non-root user for security
+- Size: ~250MB (vs ~700MB without optimization)
+
+**Frontend Container:**
+- Multi-stage build (Node builder + Nginx runner)
+- Builds React app in Node container
+- Serves static files via lightweight Nginx
+- Includes reverse proxy configuration for backend API
+- Size: ~50MB
+
+### Building Docker Images
+
+**Build both services:**
+```bash
+docker compose build
+```
+
+**Build specific service:**
+```bash
+docker compose build backend
+docker compose build frontend
+```
+
+**Build without cache (force rebuild):**
+```bash
+docker compose build --no-cache
+```
+
+### Running Containers Locally
+
+**Start all services:**
+```bash
+docker compose up -d
+```
+
+**Stop all services:**
+```bash
+docker compose down
+```
+
+**Restart specific service:**
+```bash
+docker compose restart backend
+```
+
+**View running containers:**
+```bash
+docker compose ps
+```
+
+### Docker Compose Commands
+
+**View logs:**
+```bash
+# All services
+docker compose logs -f
+
+# Specific service
+docker compose logs -f backend
+docker compose logs -f frontend
+
+# Last 100 lines
+docker compose logs --tail=100 backend
+```
+
+**Execute commands in container:**
+```bash
+# Access backend shell
+docker compose exec backend sh
+
+# Run npm commands
+docker compose exec backend npm install new-package
+```
+
+**Clean up everything:**
+```bash
+# Stop and remove containers, networks
+docker compose down
+
+# Also remove volumes (⚠️ deletes data)
+docker compose down -v
+
+# Remove all images too
+docker compose down --rmi all
+```
+
+### Pushing to Docker Registry
+
+**Tag images with your Docker Hub username:**
+```bash
+# Backend
+docker tag course-selling-backend:latest yourusername/coursehive-backend:latest
+docker push yourusername/coursehive-backend:latest
+
+# Frontend
+docker tag course-selling-frontend:latest yourusername/coursehive-frontend:latest
+docker push yourusername/coursehive-frontend:latest
+```
+
+**Or update [`docker-compose.yml`](docker-compose.yml) with image names:**
+```yaml
+services:
+  backend:
+    image: yourusername/coursehive-backend:latest
+    build:
+      context: ./backend
+  frontend:
+    image: yourusername/coursehive-frontend:latest
+    build:
+      context: .
+```
+
+**Then push with:**
+```bash
+docker compose build
+docker compose push
+```
+
+### Production Deployment with Docker
+
+**On your server (EC2, VPS, etc.):**
+
+1. **Install Docker:**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install docker.io docker-compose -y
+   sudo usermod -aG docker $USER
+   ```
+
+2. **Clone repository or pull images:**
+   ```bash
+   # Option A: Build from source
+   git clone https://github.com/yourusername/coursehive.git
+   cd coursehive
+   docker compose build
+   docker compose up -d
+   
+   # Option B: Pull pre-built images (faster)
+   docker compose pull
+   docker compose up -d
+   ```
+
+3. **Configure environment:**
+   - Create `.env` files with production values
+   - Update [`docker-compose.yml`](docker-compose.yml) ports if needed
+   - Set up SSL/HTTPS with reverse proxy (Nginx/Caddy)
+
+4. **Monitor and maintain:**
+   ```bash
+   # Check status
+   docker compose ps
+   
+   # View logs
+   docker compose logs -f
+   
+   # Update deployment
+   docker compose pull
+   docker compose up -d
+   
+   # Rollback to previous version
+   docker compose down
+   docker run yourusername/coursehive-backend:v1.0.0
+   ```
+
+### Docker Best Practices Implemented
+
+- ✅ **Multi-stage builds** - Separate build and runtime stages
+- ✅ **Layer caching** - Optimized Dockerfile instruction order
+- ✅ **Minimal base images** - Using `node:24-slim` and `nginx:alpine`
+- ✅ **Security** - Non-root user, no secrets in images
+- ✅ [**`.dockerignore`**](.dockerignore) - Exclude unnecessary files
+- ✅ **Health checks** - Container health monitoring
+- ✅ **Restart policies** - Auto-restart on failure
+- ✅ **Environment variables** - Externalized configuration
+
+### Docker Image Sizes
+
+| Service | Build Stage | Final Image | Savings |
+|---------|-------------|-------------|---------|
+| Backend | ~500MB | ~250MB | 50% |
+| Frontend | ~800MB | ~50MB | 94% |
+
+### Troubleshooting Docker
+
+**Container exits immediately:**
+```bash
+# Check logs
+docker compose logs backend
+
+# Common issues:
+# - Missing .env file
+# - Wrong environment variable values
+# - Port already in use
+```
+
+**Can't connect to backend from frontend:**
+```bash
+# Check if containers are on same network
+docker network ls
+docker network inspect course-selling_coursehive
+
+# Verify nginx proxy configuration
+docker compose exec frontend cat /etc/nginx/conf.d/nginx.conf
+```
+
+**Image size too large:**
+```bash
+# Check layer sizes
+docker history yourusername/coursehive-backend:latest
+
+# Common causes:
+# - Not using .dockerignore
+# - Copying node_modules from host
+# - Not cleaning apt cache
+```
+
+**Permission errors:**
+```bash
+# Backend runs as non-root user
+# If files need write access, adjust permissions:
+docker compose exec backend chown -R appuser:appgroup /usr/src/app
+```
 
 ## 📝 Usage
 
