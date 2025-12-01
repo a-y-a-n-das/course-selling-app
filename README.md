@@ -91,71 +91,19 @@ Experience the platform live with full functionality including course browsing, 
 
 ```
 Course-selling/
-├── backend/
-│   ├── controllers/
-│   │   ├── auth.js           # JWT authentication middleware
-│   │   ├── student.js        # Student auth & course operations
-│   │   ├── educator.js       # Educator auth, course & lesson management
-│   │   ├── addLesson.js      # Upload URL generation & lesson addition
-│   │   ├── uploadUrl.js      # S3 presigned URL for uploads
-│   │   ├── deleteFile.js     # S3 file deletion handler
-│   │   ├── signedUrl.js      # S3 pre-signed URL generation for viewing
-│   │   ├── imgUrl.js         # ImgBB image upload handler
-│   │   └── payment.js        # Razorpay payment order creation & verification
-│   ├── models/
-│   │   └── model.js          # Mongoose schemas (User, Educator, Course, Lessons)
-│   ├── routes/
-│   │   └── routes.js         # Express route definitions
-│   ├── util/
-│   │   └── s3.js             # AWS S3 client configuration
-│   ├── .env                  # Environment variables (not in Git)
-│   ├── .dockerignore         # Docker ignore patterns
-│   ├── .gitignore
-│   ├── Dockerfile            # Backend container configuration
-│   ├── example.env           # Environment template
-│   ├── server.js             # Express app entry point
-│   ├── package.json
-│   └── LICENSE
-├── src/
-│   ├── components/
-│   │   ├── Appbar/
-│   │   │   ├── Appbar.jsx            # Public navigation bar
-│   │   │   └── SigninnedAppbar.jsx   # Authenticated user nav bar
-│   │   ├── CourseContent/
-│   │   │   ├── CourseContent.jsx     # Main course viewer container
-│   │   │   ├── SideBar.jsx           # Lesson list sidebar
-│   │   │   ├── VideoPlayer.jsx       # Video lesson player
-│   │   │   └── PdfViewer.jsx         # PDF lesson viewer
-│   │   ├── EditContent/
-│   │   │   ├── AddCourseContent.jsx  # Add lessons to courses
-│   │   │   └── EduSideBar.jsx        # Educator lesson sidebar with delete
-│   │   ├── Educator/
-│   │   │   ├── EducatorsSignin.jsx   # Educator login
-│   │   │   ├── EducatorSignup.jsx    # Educator registration
-│   │   │   └── EduDashboard.jsx      # Educator course management
-│   │   └── Student/
-│   │       ├── Signin.jsx            # Student login
-│   │       ├── Signup.jsx            # Student registration
-│   │       ├── UserDashboard.jsx     # Student course dashboard
-│   │       └── PurchaseCourse.jsx    # Course purchase page with Razorpay
-│   ├── services/              # API service layer (empty)
-│   ├── assets/                # Static assets (images, icons)
-│   ├── App.jsx                # Main app with routing logic
-│   ├── main.jsx               # React entry point
-│   ├── App.css
-│   └── index.css
-├── public/
-├── .env                       # Frontend environment variables (VITE_API_URL)
-├── .dockerignore              # Docker ignore patterns
-├── .gitignore
-├── docker-compose.yml         # Multi-container orchestration
-├── Dockerfile                 # Frontend container configuration
-├── nginx.conf                 # Nginx reverse proxy configuration
-├── vite.config.js
-├── eslint.config.js
-├── package.json
-├── LICENSE
-└── README.md
+├── backend/              # Express API server
+│   ├── controllers/      # Route handlers (auth, student, educator, payment)
+│   ├── models/          # MongoDB schemas
+│   ├── routes/          # API routes
+│   ├── Dockerfile       # Backend container config
+│   └── server.js        # Entry point
+├── src/                 # React frontend
+│   ├── components/      # React components (Appbar, CourseContent, Student, Educator)
+│   ├── App.jsx
+│   └── main.jsx
+├── docker-compose.yml   # Multi-container orchestration
+├── Dockerfile           # Frontend container config
+└── nginx.conf           # Reverse proxy config
 ```
 
 ## 🚀 Getting Started
@@ -285,73 +233,13 @@ docker compose up -d
 docker compose up -d --build
 ```
 
-## 🔑 API Endpoints
+## 🔑 Key Features & Architecture
 
-### Public Routes
-- `POST /api/signup` - Student registration
-- `POST /api/signin` - Student login
-- `POST /api/educatorsignin` - Educator login
-- `POST /api/educatorsignup` - Educator registration
-- `POST /api/allCourses` - List all courses
-- `POST /api/coursebyid` - Get course details by ID
+**Authentication:** JWT-based auth with 12-hour sessions. Protected routes require `Authorization: Bearer <token>` header.
 
-### Protected Routes (Require JWT)
-- `POST /api/courses` - Get user's purchased courses
-- `POST /api/purchasecourse` - Purchase a course
-- `POST /api/createcourse` - Create new course (Educators only)
-- `GET /api/coursesbyeducator` - Get educator's courses
-- `GET /api/coursecontent/:courseId` - Get course lessons (purchased users only)
-- `GET /api/coursecontenteducator/:courseId` - Get educator's course lessons
-- `GET /api/getvideourl/:courseId/:file` - Get pre-signed S3 URL for video/PDF
-- `POST /api/uploadurl` - Get presigned URL for uploading lessons
-- `POST /api/addlesson` - Add lesson to course
-- `DELETE /api/deletelesson/:lessonId` - Delete lesson and S3 file
+**Content Delivery:** Videos/PDFs stored in AWS S3 with pre-signed URLs (5-min expiry). Direct upload from frontend to S3 using presigned URLs.
 
-### Internal Routes (Backend-to-Backend)
-- `POST /api/getuploadurl` - Generate S3 presigned URL (internal use)
-- `DELETE /api/deletefile` - Delete file from S3 bucket (requires TOKEN)
-
-## 🔐 Authentication Flow
-
-1. User/Educator signs in → Backend generates JWT token
-2. Token stored in `localStorage` (`token` for students, `edu-token` for educators)
-3. Protected routes require `Authorization: Bearer <token>` header
-4. Token verified via middleware before accessing resources
-5. Session expires after 12 hours
-
-## 🎥 Content Delivery
-
-### Upload Flow
-1. Educator creates a course
-2. Navigates to "Add Lesson" page for that course
-3. Fills in lesson title, selects type (video/PDF), and chooses file
-4. Frontend requests presigned upload URL from backend (`/api/uploadurl`)
-5. Backend generates presigned S3 URL and returns it along with filename
-6. Frontend uploads file directly to S3 using presigned URL
-7. After successful upload, frontend calls `/api/addlesson` to save lesson metadata
-8. Lesson appears immediately in sidebar with real-time updates
-
-### Viewing Flow
-- Course videos and PDFs stored in AWS S3 under `content/{courseId}/{filename}`
-- Pre-signed URLs generated with 5-minute expiry for security
-- Only purchased course content accessible to users
-- Students request signed URLs via `/api/getvideourl/:courseId/:file`
-
-### Deletion Flow
-1. Educator clicks delete on a lesson
-2. Frontend calls `/api/deleteLesson/:lessonId` with courseId and filename
-3. Backend deletes file from S3 using AWS SDK
-4. Backend removes lesson from MongoDB using `$pull` operator
-5. Frontend updates lesson list in real-time without page refresh
-
-## 🧪 Development Tools
-
-- **ESLint** - Code quality and style checking
-  ```bash
-  npm run lint
-  ```
-
-- **Vite HMR** - Instant hot module replacement during development
+**Payment Flow:** Razorpay integration with server-side signature verification for secure transactions.
 
 ## 🐳 Docker Deployment
 
@@ -413,120 +301,39 @@ docker compose restart backend
 docker compose ps
 ```
 
-### Docker Compose Commands
+### Common Docker Commands
 
-**View logs:**
 ```bash
-# All services
-docker compose logs -f
-
-# Specific service
+# View logs
 docker compose logs -f backend
-docker compose logs -f frontend
 
-# Last 100 lines
-docker compose logs --tail=100 backend
-```
-
-**Execute commands in container:**
-```bash
-# Access backend shell
+# Access container shell
 docker compose exec backend sh
 
-# Run npm commands
-docker compose exec backend npm install new-package
-```
-
-**Clean up everything:**
-```bash
-# Stop and remove containers, networks
+# Clean up
 docker compose down
-
-# Also remove volumes (⚠️ deletes data)
-docker compose down -v
-
-# Remove all images too
-docker compose down --rmi all
 ```
 
 ### Pushing to Docker Registry
 
-**Tag images with your Docker Hub username:**
 ```bash
-# Backend
 docker tag course-selling-backend:latest yourusername/coursehive-backend:latest
 docker push yourusername/coursehive-backend:latest
-
-# Frontend
-docker tag course-selling-frontend:latest yourusername/coursehive-frontend:latest
-docker push yourusername/coursehive-frontend:latest
-```
-
-**Or update [`docker-compose.yml`](docker-compose.yml) with image names:**
-```yaml
-services:
-  backend:
-    image: yourusername/coursehive-backend:latest
-    build:
-      context: ./backend
-  frontend:
-    image: yourusername/coursehive-frontend:latest
-    build:
-      context: .
-```
-
-**Then push with:**
-```bash
-docker compose build
-docker compose push
 ```
 
 ### Production Deployment with Docker
 
 **On your server (EC2, VPS, etc.):**
 
-1. **Install Docker:**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt update
-   sudo apt install docker.io docker-compose -y
-   sudo usermod -aG docker $USER
-   ```
+```bash
+# Install Docker
+sudo apt update && sudo apt install docker.io docker-compose -y
 
-2. **Clone repository or pull images:**
-   ```bash
-   # Option A: Build from source
-   git clone https://github.com/yourusername/coursehive.git
-   cd coursehive
-   docker compose build
-   docker compose up -d
-   
-   # Option B: Pull pre-built images (faster)
-   docker compose pull
-   docker compose up -d
-   ```
-
-3. **Configure environment:**
-   - Create `.env` files with production values
-   - Update [`docker-compose.yml`](docker-compose.yml) ports if needed
-   - Set up SSL/HTTPS with reverse proxy (Nginx/Caddy)
-
-4. **Monitor and maintain:**
-   ```bash
-   # Check status
-   docker compose ps
-   
-   # View logs
-   docker compose logs -f
-   
-   # Update deployment
-   docker compose pull
-   docker compose up -d
-   
-   # Rollback to previous version
-   docker compose down
-   docker run yourusername/coursehive-backend:v1.0.0
-   ```
+# Deploy
+git clone https://github.com/yourusername/coursehive.git
+cd coursehive
+docker compose up -d
+```
 
 ### Docker Best Practices Implemented
 
@@ -546,65 +353,7 @@ docker compose push
 | Backend | ~500MB | ~250MB | 50% |
 | Frontend | ~800MB | ~50MB | 94% |
 
-### Troubleshooting Docker
 
-**Container exits immediately:**
-```bash
-# Check logs
-docker compose logs backend
-
-# Common issues:
-# - Missing .env file
-# - Wrong environment variable values
-# - Port already in use
-```
-
-**Can't connect to backend from frontend:**
-```bash
-# Check if containers are on same network
-docker network ls
-docker network inspect course-selling_coursehive
-
-# Verify nginx proxy configuration
-docker compose exec frontend cat /etc/nginx/conf.d/nginx.conf
-```
-
-**Image size too large:**
-```bash
-# Check layer sizes
-docker history yourusername/coursehive-backend:latest
-
-# Common causes:
-# - Not using .dockerignore
-# - Copying node_modules from host
-# - Not cleaning apt cache
-```
-
-**Permission errors:**
-```bash
-# Backend runs as non-root user
-# If files need write access, adjust permissions:
-docker compose exec backend chown -R appuser:appgroup /usr/src/app
-```
-
-## 📝 Usage
-
-### For Students
-1. **Sign up** at `/signup` or **sign in** at `/signin`
-2. Browse courses on the dashboard
-3. Click "Purchase" to enroll in a course
-4. Access course content from your dashboard
-5. Watch videos and read PDFs in the course viewer
-
-### For Educators
-1. **Sign up** at `/educatorsignup` or **sign in** at `/educators`
-2. Create courses from the educator dashboard
-3. Upload thumbnail, set price, level, duration, and category
-4. View all your created courses
-5. Click on a course to add lessons
-6. Upload video (MP4/MKV) or PDF lessons with titles
-7. View lessons in real-time sidebar
-8. Delete lessons when needed (auto-removes from S3 and database)
 
 ## 🤝 Contributing
 
