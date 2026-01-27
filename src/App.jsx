@@ -13,6 +13,7 @@ import EduDashboard from "./components/Educator/EduDashboard.jsx";
 import CourseContent from "./components/CourseContent/CourseContent.jsx";
 import EducatorSignup from "./components/Educator/EducatorSignup.jsx";
 import AddCourseContent from "./components/EditContent/AddCourseContent.jsx";
+import Homepage from "./components/Home/Homepage.jsx";
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(null);
@@ -59,14 +60,17 @@ function App() {
 
    return (
     <Router>
-      {isSignedIn ? (
+
+      {(window.location.pathname !== "/")? isSignedIn  ? (
         <SigninnedAppbar setIsSignedIn={setIsSignedIn} />
       ) : (
         <Appbar />
-      )}
+      ):null}
 
       <Routes>
         {/* PUBLIC ROUTES */}
+        <Route path="/" element={<Homepage />} />
+
         {!isSignedIn && (
           <Route path="/*" element={<PublicRoutes setIsSignedIn={setIsSignedIn} />} />
         )}

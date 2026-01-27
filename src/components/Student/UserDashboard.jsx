@@ -78,7 +78,7 @@ function UserDashboard() {
                       flexDirection: "column",
                       justifyContent: "flex-start",
                       width: "300px",
-                      height: "250px",
+                      height: "270px",
                       marginLeft: "10px",
                       cursor: "pointer",
                     }}

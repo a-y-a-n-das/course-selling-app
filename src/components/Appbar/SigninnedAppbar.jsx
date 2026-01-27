@@ -20,11 +20,13 @@ const SigninnedAppbar = ({ setIsSignedIn }) => {
           height: "7vh",
           zIndex: 1300,
           backgroundColor: "#eeeeee",
+          paddingLeft: "20px",
+          paddingRight: "20px",
         }}
       >
         <div>
           <Typography color="blue" variant="h5">
-            CourseHive
+            <a href="/">CourseHive</a>
           </Typography>
         </div>
         <div>

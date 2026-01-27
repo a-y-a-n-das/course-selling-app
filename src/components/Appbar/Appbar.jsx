@@ -15,8 +15,10 @@ return(
             padding: "6px",
             height: "7vh", 
             zIndex: 1300,
+            paddingRight: "20px",
+            paddingLeft: "20px",
         }}>
-            <div><Typography color="blue" variant="h5">CourseHive</Typography></div>
+            <div><Typography color="blue" variant="h5"><a href="/">CourseHive</a></Typography></div>
             <div>
                 <Button variant="contained"  onClick={()=>{(token)? navigate("/Signin"): navigate("/educatorssignin")}}>Sign In</Button>
                 <Button style={{marginLeft: "10px"}} variant="contained" onClick={()=>{(token)? navigate("/Signup"): navigate("/educatorsignup")}}>Sign Up</Button>
